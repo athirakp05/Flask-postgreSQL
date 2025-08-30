@@ -1,41 +1,117 @@
 import React, { useState, useEffect } from "react";
-import type { Product } from "./types";
-import ProductTable from "./assets/components/ProductTable";
+import type { Product, ProductFormData } from "./types";
+import ProductForm from "./assets/components/ProductForm";
+import ProductList from "./assets/components/ProductList";  
 
 function App() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [newProduct, setNewProduct] = useState({ name: "", price: "", description: "", in_stock: true });
+  const [newProduct, setNewProduct] = useState<ProductFormData>({
+    name: "",
+    price: "",
+    description: "",
+    in_stock: true,
+    created_at: new Date().toISOString().split("T")[0], // today by default
+  });
   const [editingId, setEditingId] = useState<number | null>(null);
 
+  // Load products
   useEffect(() => {
     fetch("http://127.0.0.1:8000/product/")
       .then((res) => res.json())
       .then((data) => setProducts(data));
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  // Handle input change
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setNewProduct({ ...newProduct, [name]: value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => { /* same as before */ };
-  const handleDelete = async (id: number) => { /* same as before */ };
-  const handleEdit = (product: Product) => { /* same as before */ };
+  // Create or Update product
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Convert price back to number before sending
+    const productToSend = {
+      ...newProduct,
+      price: parseFloat(newProduct.price),
+    };
+
+    if (editingId) {
+      const response = await fetch(`http://127.0.0.1:8000/product/${editingId}/`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(productToSend),
+      });
+
+      if (response.ok) {
+        const updated = await response.json();
+        setProducts(products.map((p) => (p.id === editingId ? updated : p)));
+        setEditingId(null);
+      }
+    } else {
+      const response = await fetch("http://127.0.0.1:8000/product/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(productToSend),
+      });
+
+      if (response.ok) {
+        const created = await response.json();
+        setProducts([...products, created]);
+      }
+    }
+
+    // Reset form
+    setNewProduct({
+      name: "",
+      price: "",
+      description: "",
+      in_stock: true,
+      created_at: new Date().toISOString().split("T")[0],
+    });
+  };
+
+  // Delete product
+  const handleDelete = async (id: number) => {
+    const response = await fetch(`http://127.0.0.1:8000/product/${id}/`, {
+      method: "DELETE",
+    });
+
+    if (response.ok) {
+      setProducts(products.filter((p) => p.id !== id));
+    }
+  };
+
+  // Edit product
+  const handleEdit = (product: Product) => {
+    setNewProduct({
+      name: product.name,
+      price: String(product.price),
+      description: product.description,
+      in_stock: product.in_stock,
+      created_at: product.created_at,
+    });
+    setEditingId(product.id);
+  };
 
   return (
-    <div className="app-container">
-  <h1>Product CRUD</h1>
-
-  <form className="product-form" onSubmit={handleSubmit}>
-    <input name="name" placeholder="Name" value={newProduct.name} onChange={handleChange} />
-    <input name="price" type="number" placeholder="Price" value={newProduct.price} onChange={handleChange} />
-    <textarea name="description" placeholder="Description" value={newProduct.description} onChange={handleChange} />
-    <button type="submit">{editingId ? "Update Product" : "Add Product"}</button>
-  </form>
-
-  <ProductTable products={products} onEdit={handleEdit} onDelete={handleDelete} />
-</div>
-
+    <div style={{ padding: "20px" }}>
+      <h1>Product CRUD</h1>
+      <ProductForm
+        newProduct={newProduct}
+        editingId={editingId}
+        onChange={handleChange}
+        onSubmit={handleSubmit}
+      />
+      <ProductList
+        products={products}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
+    </div>
   );
 }
 
