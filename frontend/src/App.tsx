@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import type { Product, ProductFormData } from "./types";
 import ProductForm from "./assets/components/ProductForm";
 import ProductList from "./assets/components/ProductList";  
-
 function App() {
   const [products, setProducts] = useState<Product[]>([]);
   const [newProduct, setNewProduct] = useState<ProductFormData>({
@@ -98,8 +97,11 @@ function App() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Product CRUD</h1>
+<div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
+      <div className="w-full max-w-3xl bg-white shadow-lg rounded-xl p-6">
+        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+          Product CRUD
+        </h1>
       <ProductForm
         newProduct={newProduct}
         editingId={editingId}
@@ -111,6 +113,7 @@ function App() {
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
+    </div>
     </div>
   );
 }

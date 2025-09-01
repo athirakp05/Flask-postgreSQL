@@ -15,12 +15,16 @@ const ProductForm: React.FC<ProductFormProps> = ({
   onSubmit,
 }) => {
   return (
-    <form onSubmit={onSubmit} style={{ marginBottom: "20px" }}>
+    <form
+      onSubmit={onSubmit}
+      className="grid grid-cols-1 gap-4 mb-6 bg-gray-50 p-4 rounded-lg shadow-inner"
+    >
       <input
         name="name"
-        placeholder="Name"
+        placeholder="Product Name"
         value={newProduct.name}
         onChange={onChange}
+        className="p-2 border rounded-md focus:ring focus:ring-blue-300"
       />
       <input
         name="price"
@@ -28,20 +32,26 @@ const ProductForm: React.FC<ProductFormProps> = ({
         type="number"
         value={newProduct.price}
         onChange={onChange}
+        className="p-2 border rounded-md focus:ring focus:ring-blue-300"
       />
       <textarea
         name="description"
         placeholder="Description"
         value={newProduct.description}
         onChange={onChange}
+        className="p-2 border rounded-md focus:ring focus:ring-blue-300"
       />
       <input
         type="date"
         name="created_at"
         value={newProduct.created_at}
         onChange={onChange}
+        className="p-2 border rounded-md focus:ring focus:ring-blue-300"
       />
-      <button type="submit">
+      <button
+        type="submit"
+        className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
+      >
         {editingId ? "Update Product" : "Add Product"}
       </button>
     </form>
