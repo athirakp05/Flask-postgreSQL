@@ -86,7 +86,7 @@ DATABASES = {
     "default": dj_database_url.config(
         default="postgres://postgres:athira@localhost:5432/productdb",
         conn_max_age=600,
-        ssl_require=False  # Render will force SSL automatically
+        ssl_require=True  # require SSL in production (Render’s DBs)
     )
 }
 
