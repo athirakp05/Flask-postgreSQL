@@ -43,11 +43,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'product',
 ]
-CORS_ALLOWED_ORIGINS = [
-    "https://your-frontend.vercel.app",  # replace with your actual Vercel URL after deploy
-    "http://localhost:3000",             # for local dev
-]
-
+# CORS_ALLOWED_ORIGINS = [
+#     # "https://your-frontend.vercel.app",  # replace with your actual Vercel URL after deploy
+#     "http://localhost:3000",             # for local dev
+# ]
+CORS_ALLOW_ALL_ORIGINS = True   
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
