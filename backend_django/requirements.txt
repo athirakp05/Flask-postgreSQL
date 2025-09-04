@@ -44,7 +44,6 @@ trio-websocket==0.11.1
 typing_extensions==4.10.0
 tzdata==2023.3
 urllib3==2.0.7
-vboxapi==1.0
 virtualenv==20.24.5
 virtualenvwrapper-win==1.2.7
 whitenoise==6.9.0
